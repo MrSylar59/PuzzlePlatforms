@@ -20,8 +20,16 @@ class PUZZLEPLATFORMS_API AMovingPlatform : public AStaticMeshActor
 		UPROPERTY(EditAnywhere, Category="Moving Platform")
 		float MovingSpeed = 5;
 
+		// Meta pour ajouter un widget dans l'éditeur
+		UPROPERTY(EditAnywhere, Category="Moving Platform", Meta=(MakeEditWidget=true))
+		FVector TargetLocation;
+
 	protected: 
 		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
+
+	private:
+		FVector GlobalTargetLocation;
+		FVector GlobalStartLocation;
 	
 };

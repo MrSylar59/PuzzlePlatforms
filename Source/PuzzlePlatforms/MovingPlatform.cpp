@@ -16,6 +16,10 @@ void AMovingPlatform::BeginPlay(){
 		SetReplicates(true); // Permet de répliquer l'objet sur les clients connectés au serveur
 		SetReplicateMovement(true); // Permet de répliquer les mouvements sur les clients connectés au serveur
 	}
+
+	// Il faut transformer notre TargetLocation en WorldPosition pour avoir la direction
+	GlobalTargetLocation = GetTransform().TransformPosition(TargetLocation);
+	GlobalStartLocation = GetActorLocation();
 }
 
 void AMovingPlatform::Tick(float DeltaTime) {
@@ -24,7 +28,15 @@ void AMovingPlatform::Tick(float DeltaTime) {
 	// Permet de modifier la position de l'acteur uniquement sur le serveur
 	if (HasAuthority()) {
 		FVector loc = GetActorLocation();
-		loc += FVector(MovingSpeed * DeltaTime, 0, 0);
+		FVector dir = (GlobalTargetLocation - GlobalStartLocation).GetSafeNormal();
+
+		if (!FVector::Coincident(dir, GlobalTargetLocation-loc)){
+			FVector temp = GlobalStartLocation;
+			GlobalStartLocation = GlobalTargetLocation;
+			GlobalTargetLocation = temp;
+		}
+
+		loc += dir * MovingSpeed * DeltaTime;
 		SetActorLocation(loc);
 	}
 }
