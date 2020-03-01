@@ -21,6 +21,7 @@ class PUZZLEPLATFORMS_API AMovingPlatform : public AStaticMeshActor
 		float MovingSpeed = 5;
 
 	protected: 
+		virtual void BeginPlay() override;
 		virtual void Tick(float DeltaTime) override;
 	
 };
